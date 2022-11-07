@@ -10,10 +10,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+    p: 5,
 };
 
 export default function MUIDeleteModal() {
@@ -26,17 +23,20 @@ export default function MUIDeleteModal() {
         store.deleteMarkedList();
     }
     function handleCloseModal(event) {
-        store.unmarkListForDeletion();
+        store.hideModals();
     }
 
     return (
         <Modal
-            open={store.listMarkedForDeletion !== null}
+            open={store.listMarkedForDeletion !== null} //WE OPEN THE MODAL IF WE THE LIST ISNT NULL
         >
             <Box sx={style}>
                 <div className="modal-dialog">
+                <div className="modal-north">
+                    Delete playlist?
+                </div>
                 <header className="dialog-header">
-                    Delete the {name} Top 5 List?
+                    Delete the <span>{name}</span> Playlist?
                 </header>
                 <div id="confirm-cancel-container">
                     <button

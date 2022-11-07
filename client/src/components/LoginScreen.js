@@ -15,6 +15,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import MUIAccountError from './MUIAccountError';
+import Statusbar from './Statusbar';
 
 export default function LoginScreen() {
     const { auth } = useContext(AuthContext);
@@ -22,11 +24,16 @@ export default function LoginScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        auth.loginUser(
-            formData.get('email'),
-            formData.get('password')
-        );
 
+        if(formData.get('email') === "" || formData.get('password') === "") {
+            auth.windowAlert("Please Fill In All Text Fields")
+        }
+        else {
+            auth.loginUser(
+                formData.get('email'),
+                formData.get('password')
+            );
+        }
     };
 
     return (
@@ -38,7 +45,7 @@ export default function LoginScreen() {
                 sm={4}
                 md={7}
                 sx={{
-                    backgroundImage: 'url(https://source.unsplash.com/random)',
+                    backgroundImage: 'url(https://media.tenor.com/no01nqqz-TYAAAAC/pochita-chainsaw-man.gif)',
                     backgroundRepeat: 'no-repeat',
                     backgroundColor: (t) =>
                         t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -95,6 +102,7 @@ export default function LoginScreen() {
                         >
                             Sign In
                         </Button>
+                        <MUIAccountError />
                         <Grid container>
                             <Grid item xs>
                                 <Link href="#" variant="body2">
@@ -102,7 +110,7 @@ export default function LoginScreen() {
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link href="/register/" variant="body2">
                                     {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>

@@ -12,6 +12,7 @@ import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import MUIAccountError from './MUIAccountError';
 
 export default function RegisterScreen() {
     const { auth } = useContext(AuthContext);
@@ -19,17 +20,29 @@ export default function RegisterScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        auth.registerUser(
-            formData.get('firstName'),
-            formData.get('lastName'),
-            formData.get('email'),
-            formData.get('password'),
-            formData.get('passwordVerify')
-        );
+
+        if(formData.get('password').length < 8) {
+            auth.windowAlert("Password Is Too Short. Type At Least 8 Characters");  
+        }
+        else if (formData.get('firstName') === "" || formData.get('lastName') === "" || formData.get('email') === "" || formData.get('password') === "" || formData.get('passwordVerify') === "") {
+            auth.windowAlert("Please Fill In All Text Fields");
+        }
+        else if (formData.get('password') !== formData.get('passwordVerify')) {
+            auth.windowAlert("The Passwords Don't Match");
+        }
+        else {
+            auth.registerUser(
+                formData.get('firstName'),
+                formData.get('lastName'),
+                formData.get('email'),
+                formData.get('password'),
+                formData.get('passwordVerify')
+            );
+        }
     };
 
     return (
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="xll">
                 <CssBaseline />
                 <Box
                     sx={{
@@ -105,9 +118,12 @@ export default function RegisterScreen() {
                             type="submit"
                             fullWidth
                             variant="contained"
+                            disabled={auth.parametersMet == false}
                             sx={{ mt: 3, mb: 2 }}
+
                         >
                             Sign Up
+                        <MUIAccountError />
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>

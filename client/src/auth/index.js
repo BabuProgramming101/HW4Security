@@ -5,18 +5,26 @@ import api from './auth-request-api'
 const AuthContext = createContext();
 console.log("create AuthContext: " + AuthContext);
 
+
+
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
 export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
-    REGISTER_USER: "REGISTER_USER"
+    REGISTER_USER: "REGISTER_USER",
+    VALIDATE_INFO: "VALIDATE_INFO",
+    CLOSE_INFO: "CLOSE_INFO"
 }
 
 function AuthContextProvider(props) {
+
     const [auth, setAuth] = useState({
         user: null,
-        loggedIn: false
+        loggedIn: false,
+        parametersMet: true,
+        alertInfo: "",
+        infoIndex: 0
     });
     const history = useHistory();
 
@@ -51,9 +59,40 @@ function AuthContextProvider(props) {
                     loggedIn: true
                 })
             }
+            case AuthActionType.VALIDATE_INFO: {
+                return setAuth({
+                    parametersMet: payload.parametersMet,
+                    alertStatus: payload.alertStatus,
+                })
+            }
+            case AuthActionType.CLOSE_INFO: {
+                return setAuth({
+                    parametersMet: payload.parametersMet,
+                    alertStatus: auth.alertStatus
+                })
+            }
             default:
                 return auth;
         }
+    }
+
+    auth.windowAlert = async function(errorInfo) {
+        authReducer({
+            type: AuthActionType.VALIDATE_INFO,
+            payload: {
+                parametersMet: false,
+                alertStatus: errorInfo,
+            }
+        });
+    }
+
+    auth.windowAlertOff = async function() {
+        authReducer({
+            type: AuthActionType.CLOSE_INFO,
+            payload: {
+                parametersMet: true
+            }
+        });
     }
 
     auth.getLoggedIn = async function () {
@@ -69,29 +108,39 @@ function AuthContextProvider(props) {
         }
     }
 
-    auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) {
-        const response = await api.registerUser(firstName, lastName, email, password, passwordVerify);      
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.REGISTER_USER,
-                payload: {
-                    user: response.data.user
-                }
-            })
-            history.push("/login");
+    auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) { //USED TO CREATE A USER
+        try {
+            const response = await api.registerUser(firstName, lastName, email, password, passwordVerify);
+            if (response.status === 200) {
+                console.log("200 Request");
+                authReducer({
+                    type: AuthActionType.REGISTER_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                })
+                history.push("/"); //THIS WOULD LOG IN THE USER AND ALSO ALLOW THEM TO EDIT RIGHT AWAY AND FOR SOME REASON IT WORKS??
+            } 
+        }
+        catch (error) { //CATCHES THE 400 ERROR AND OUR ONLY REALLY MAIN ERROR IS THE DUPLICATE EMAIL ERROR
+            this.windowAlert("The Email Has Already Been Used");
         }
     }
 
     auth.loginUser = async function(email, password) {
-        const response = await api.loginUser(email, password);
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.LOGIN_USER,
-                payload: {
-                    user: response.data.user
-                }
-            })
-            history.push("/");
+        try {
+            const response = await api.loginUser(email, password);
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.LOGIN_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                })
+                history.push("/");
+            }
+        } catch (error) {
+            this.windowAlert("Incorrect Email or Password Provided");
         }
     }
 

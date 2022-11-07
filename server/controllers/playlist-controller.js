@@ -9,6 +9,7 @@ const User = require('../models/user-model');
 */
 createPlaylist = (req, res) => {
     const body = req.body;
+    console.log(body);
     console.log("createPlaylist body: " + JSON.stringify(body));
 
     if (!body) {
@@ -24,7 +25,7 @@ createPlaylist = (req, res) => {
         return res.status(400).json({ success: false, error: err })
     }
 
-    User.findOne({ _id: req.userId }, (err, user) => {
+    User.findOne({ _id: req.userId }, (err, user) => { //WE NEED TO FIND THE USER THAT WE WANT TO ADD THE PLAYLIST TO
         console.log("user found: " + JSON.stringify(user));
         user.playlists.push(playlist._id);
         user
@@ -46,6 +47,8 @@ createPlaylist = (req, res) => {
     })
 }
 deletePlaylist = async (req, res) => {
+    const body = req.body;
+    console.log(req.body);
     console.log("delete Playlist with id: " + JSON.stringify(req.params.id));
     console.log("delete " + req.params.id);
     Playlist.findById({ _id: req.params.id }, (err, playlist) => {
@@ -56,7 +59,7 @@ deletePlaylist = async (req, res) => {
             })
         }
 
-        // DOES THIS LIST BELONG TO THIS USER?
+        // DOES THIS LIST BELONG TO THIS USER?**
         async function asyncFindUser(list) {
             User.findOne({ email: list.ownerEmail }, (err, user) => {
                 console.log("user._id: " + user._id);
@@ -74,6 +77,7 @@ deletePlaylist = async (req, res) => {
                     });
                 }
             });
+
         }
         asyncFindUser(playlist);
     })
@@ -156,6 +160,7 @@ getPlaylists = async (req, res) => {
 }
 updatePlaylist = async (req, res) => {
     const body = req.body
+    console.log(body);
     console.log("updatePlaylist: " + JSON.stringify(body));
     console.log("req.body.name: " + req.body.name);
 

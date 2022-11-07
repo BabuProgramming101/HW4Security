@@ -8,7 +8,6 @@ import {
     HomeWrapper,
     LoginScreen,
     RegisterScreen,
-    Statusbar,
     WorkspaceScreen
 } from './components'
 /*
@@ -21,7 +20,9 @@ import {
   inject our store into all the components in our application.
   
   @author McKilla Gorilla
+
 */
+
 const App = () => {   
     return (
         <BrowserRouter>
@@ -34,11 +35,11 @@ const App = () => {
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} />
                     </Switch>
-                    <Statusbar />
                 </GlobalStoreContextProvider>
             </AuthContextProvider>
         </BrowserRouter>
     )
+
 }
 
 export default App

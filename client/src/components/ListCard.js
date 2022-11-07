@@ -51,7 +51,7 @@ function ListCard(props) {
         event.stopPropagation();
         let _id = event.target.id;
         _id = ("" + _id).substring("delete-list-".length);
-        store.markListForDeletion(id);
+        store.markListForDeletion(id, idNamePair);
     }
 
     function handleKeyPress(event) {
@@ -77,8 +77,9 @@ function ListCard(props) {
         <ListItem
             id={idNamePair._id}
             key={idNamePair._id}
-            sx={{ marginTop: '15px', display: 'flex', p: 1 }}
-            style={{ width: '100%', fontSize: '48pt' }}
+            disabled={cardStatus || store.ableEdit() || store.ableDelete()}
+            sx={{ marginTop: '12px', display: 'flex', p: 1, bgcolor: 'background.paper' }}
+            style={{ width: '100%', fontSize: '30pt' }}
             button
             onClick={(event) => {
                 handleLoadList(event, idNamePair._id)
@@ -87,14 +88,14 @@ function ListCard(props) {
             <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
             <Box sx={{ p: 1 }}>
                 <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                    <EditIcon style={{fontSize:'48pt'}} />
+                    <EditIcon style={{fontSize:'30pt'}} />
                 </IconButton>
             </Box>
             <Box sx={{ p: 1 }}>
                 <IconButton onClick={(event) => {
                         handleDeleteList(event, idNamePair._id)
                     }} aria-label='delete'>
-                    <DeleteIcon style={{fontSize:'48pt'}} />
+                    <DeleteIcon style={{fontSize:'30pt'}} />
                 </IconButton>
             </Box>
         </ListItem>

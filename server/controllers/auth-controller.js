@@ -127,8 +127,9 @@ registerUser = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this email address already exists."
+                    errorMessage: "That Email Has Already Been Used."
                 })
+            
         }
 
         const saltRounds = 10;
@@ -166,6 +167,8 @@ registerUser = async (req, res) => {
         res.status(500).send();
     }
 }
+
+
 
 module.exports = {
     getLoggedIn,

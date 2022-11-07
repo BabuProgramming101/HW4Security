@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
+import Statusbar from './Statusbar';
 
 function SongCard(props) {
     const { store } = useContext(GlobalStoreContext);
